@@ -147,7 +147,7 @@ func TestMerge(t *testing.T) {
 			"j": "j",
 		},
 		"src1": map[string]interface{}{
-			"a": 1,
+			"a": nil,
 			"b": 2,
 			"d": map[string]interface{}{
 				"e": "four",
@@ -246,6 +246,63 @@ func TestMergeOverwrite(t *testing.T) {
 		"h": 10,          // merged from src2
 		"i": "i",         // overwritten twice src2 wins
 		"j": "j",         // overwritten twice src2 wins
+		"k": map[string]interface{}{ // deep merge
+			"l": false, // overwritten src1 wins
+		},
+	}
+	assert.Equal(t, expected, dict["dst"])
+}
+
+func TestMergeWithEmptyValues(t *testing.T) {
+	dict := map[string]interface{}{
+		"src2": map[string]interface{}{
+			"h": 10,
+			"i": "i",
+			"j": nil,
+		},
+		"src1": map[string]interface{}{
+			"a": nil,
+			"b": 2,
+			"d": map[string]interface{}{
+				"e": "four",
+			},
+			"g": []int{6, 7},
+			"i": "aye",
+			"j": "jay",
+			"k": map[string]interface{}{
+				"l": false,
+			},
+		},
+		"dst": map[string]interface{}{
+			"a": "one",
+			"c": 3,
+			"d": map[string]interface{}{
+				"f": 5,
+			},
+			"g": []int{8, 9},
+			"i": "eye",
+			"k": map[string]interface{}{
+				"l": true,
+			},
+		},
+	}
+	tpl := `{{mergeWithEmptyValues .dst .src1 .src2}}`
+	_, err := runRaw(tpl, dict)
+	if err != nil {
+		t.Error(err)
+	}
+	expected := map[string]interface{}{
+		"a": nil, // key nil-overwritten from src1
+		"b": 2, // merged from src1
+		"c": 3, // merged from dst
+		"d": map[string]interface{}{ // deep merge
+			"e": "four",
+			"f": 5,
+		},
+		"g": []int{6, 7}, // overwritten src1 wins
+		"h": 10,          // merged from src2
+		"i": "i",         // overwritten twice src2 wins
+		"j": nil,         // overwritten twice src2 wins
 		"k": map[string]interface{}{ // deep merge
 			"l": false, // overwritten src1 wins
 		},
