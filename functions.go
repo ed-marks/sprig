@@ -304,8 +304,10 @@ var genericMap = map[string]interface{}{
 	"omit":               omit,
 	"merge":              merge,
 	"mergeOverwrite":     mergeOverwrite,
+	"mergeWithEmptyValues":     mergeWithEmptyValues,
 	"mustMerge":          mustMerge,
 	"mustMergeOverwrite": mustMergeOverwrite,
+	"mustMergeWithEmptyValues": mustMergeWithEmptyValues,
 	"values":             values,
 
 	"append": push, "push": push,
